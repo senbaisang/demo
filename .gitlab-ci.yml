@@ -1,11 +1,22 @@
 image: ruby:2.6
 
-services:
-  - postgres:9.3
-
 before_script:
   - bundle install
 
-test:
+stages:
+  - prepare
+
+code-check:
+  stage: prepare
+  variables:
+    POSTGRES_DB: db_test
+    POSTGRES_USER: super
+    POSTGRES_PASSWORD: creator_password
+    RAILS_ENV: test
+    HEROKU_DB_URL: postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres/$POSTGRES_DB?pool=5
+  services:
+    - postgres:10
   script:
-  - bundle exec rake test
+    - rake db:test:prepare
+    - bundle exec rake test
+
