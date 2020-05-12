@@ -1,10 +1,10 @@
 image: ruby:2.6
 
 services:
-  - postgres: 9.3
+- postgres: 9.3
 
 before_script:
-  - bundle install
+- bundle install
 
 test:
   script:
