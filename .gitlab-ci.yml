@@ -1,7 +1,8 @@
 image: ruby:2.6
 
 before_script:
-  - bundle install
+  - gem install bundle --version '2.1.4'
+  - bundle _2.1.4_ install
 
 stages:
   - prepare
