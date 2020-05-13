@@ -1,11 +1,16 @@
 image: ruby:2.6
 
 before_script:
-  - gem install bundle
-  - bundle install
+  - docker info
+
+variables:
+  DOCKER_IMAGE_NAME: demo-ci
+  CI_PROJECT_NAME: demo-ci
+  REGISTRY_SERVER: sally
 
 stages:
   - prepare
+  - deploy
 
 code-check:
   stage: prepare
@@ -19,4 +24,20 @@ code-check:
     - postgres:10
   script:
     - bundle exec rake test
+
+production:
+  stage: deploy
+  only:
+    - master
+  when: manual
+  dependencies:
+    - code-check
+  script:
+    - IMAGE_VERSION=`TZ=UTC-8 date +%Y%m%d_%H%M%S`
+    - echo ${CI_PROJECT_NAME}:$IMAGE_VERSION
+    - touch docker_image_version
+    - echo $IMAGE_VERSION > $CI_PROJECT_DIR/docker_image_version
+    - docker build -t $REGISTRY_SERVER/$DOCKER_IMAGE_NAME:$IMAGE_VERSION .
+    - docker tag $REGISTRY_SERVER/$DOCKER_IMAGE_NAME:$IMAGE_VERSION $REGISTRY_SERVER/$DOCKER_IMAGE_NAME:latest
+    - docker run -d -p 3000:3000 --name demo-ci
 
