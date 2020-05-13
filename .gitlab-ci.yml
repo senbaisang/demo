@@ -18,6 +18,5 @@ code-check:
   services:
     - postgres:10
   script:
-    - rake db:test:prepare
     - bundle exec rake test
 
