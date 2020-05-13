@@ -12,8 +12,6 @@ variables:
   DOCKER_IMAGE_NAME: demo-ci
   CI_PROJECT_NAME: demo-ci
   REGISTRY_SERVER: sally
-  DOCKER_HOST: localhost
-
 
 stages:
   - prepare
