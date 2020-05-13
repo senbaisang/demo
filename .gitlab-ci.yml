@@ -3,8 +3,11 @@ image: docker:19.03.8
 before_script:
   - docker info
 
+services:
+  - docker:19.03.8-dind
+
 variables:
-  DOCKER_TLS_CERTDIR: ""
+  DOCKER_TLS_CERTDIR: "/certs"
   DOCKER_IMAGE_NAME: demo-ci
   CI_PROJECT_NAME: demo-ci
   REGISTRY_SERVER: sally
@@ -38,7 +41,7 @@ production:
     - echo ${CI_PROJECT_NAME}:$IMAGE_VERSION
     - touch docker_image_version
     - echo $IMAGE_VERSION > $CI_PROJECT_DIR/docker_image_version
-    - docker login registry.gitlab.com
+    - docker login registry.gitlab.com -u 935498041@qq.com -p $CI_JOB_TOKEN
     - docker build -t registry.gitlab.com/senbaisang/demo-ci .
     - docker push registry.gitlab.com/senbaisang/demo-ci
     - docker run -d -p 3000:3000 --name demo-ci registry.gitlab.com/senbaisang/demo-ci
