@@ -4,7 +4,7 @@ before_script:
   - docker info
 
 variables:
-  DOCKER_IMAGE_NAME: demo-ci
+  DOCKER_HOST: tcp://localhost:2378
   CI_PROJECT_NAME: demo-ci
   REGISTRY_SERVER: sally
 
