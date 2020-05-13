@@ -1,13 +1,16 @@
 image: docker:19.03.8
 
 services:
-  - docker:19.03.8-dind
+  - name: docker:dind
+    entrypoint: ["env", "-u", "DOCKER_HOST"]
+    command: ["dockerd-entrypoint.sh"]
 
 before_script:
   - docker info
 
 variables:
-  DOCKER_HOST: tcp://docker:2375
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
   DOCKER_IMAGE_NAME: demo-ci
   CI_PROJECT_NAME: demo-ci
@@ -42,7 +45,8 @@ production:
     - echo ${CI_PROJECT_NAME}:$IMAGE_VERSION
     - touch docker_image_version
     - echo $IMAGE_VERSION > $CI_PROJECT_DIR/docker_image_version
-    - docker build -t $REGISTRY_SERVER/$DOCKER_IMAGE_NAME:$IMAGE_VERSION .
-    - docker tag $REGISTRY_SERVER/$DOCKER_IMAGE_NAME:$IMAGE_VERSION $REGISTRY_SERVER/$DOCKER_IMAGE_NAME:latest
-    - docker run -d -p 3000:3000 --name demo-ci
+    - docker login registry.gitlab.com
+    - docker build -t registry.gitlab.com/senbaisang/demo-ci .
+    - docker push registry.gitlab.com/senbaisang/demo-ci
+    - docker run -d -p 3000:3000 --name demo-ci registry.gitlab.com/senbaisang/demo-ci
 
