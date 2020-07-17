@@ -1,0 +1,25 @@
+name: Second
+
+on:
+ push:
+   branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HEROKU_DB_URL: ${{secrets.HEROKU_DB_URL}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.5.1
+    - name: Install dependenties
+      run: bundle install
+    - name: Run tests
+      run: bundle exec rake
+    - name: Add remote origin
+      run: git remote add heroku https://heroku:${{secrets.HEROKU_API_KEY}}@git.heroku.com/${{secrets.HEROKU_APP_NAME}}.git
+    - name: Deploy to heroku
+      run: git push heroku HEAD:master -f
